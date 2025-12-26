@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Task App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+      /* 完了済みタスクを薄く表示 */
+      .completed {
+          opacity: 0.5;
+      }
+
+      /* タスク行全体をFlexで左右に分ける */
+      .task-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between; /* 左：チェック+文章、右：ボタン */
+          gap: 8px;
+      }
+
+      .task-left {
+          display: flex;
+          align-items: center;
+          gap: 8px; /* チェックと文章の間隔 */
+      }
+
+      .task-content {
+          min-width: 0; /* 文章が長くても折り返す */
+      }
+
+      .task-actions {
+          display: flex;
+          gap: 4px; /* ボタン間の間隔 */
+      }
+    </style>
+    <script>
+      function toggleComplete(taskId) {
+          document.getElementById('complete-form-' + taskId).submit();
+      }
+    </script>
+</head>
+<body>
+
+<h1>タスク管理アプリ</h1>
+
+<!-- 追加フォーム -->
+<form action="/add" method="post" class="add-form">
+  <div class="task-row">
+      <input id="taskInput" class="task-input" type="text" name="title" placeholder="タスクを入力" />
+      <button type="submit" class="btn add">追加</button>
+  </div>
+  <div class="due-area">
+      <span class="due-label">期限：</span>
+      <input type="date" name="due_date" class="due-input">
+  </div>
+</form>
+
+<hr>
+
+<!-- 並び替え -->
+<form method="get" action="/" style="margin-bottom: 10px;">
+  <label>並び替え：</label>
+  <select name="sort">
+    <option value="">並び替えなし</option>
+    <option value="created_new">作成日（新しい順）</option>
+    <option value="created_old">作成日（古い順）</option>
+    <option value="due_near">期限が近い順</option>
+    <option value="due_far">期限が遠い順</option>
+  </select>
+  <button type="submit">並び替え</button>
+</form>
+
+<h2>未完了</h2>
+<ul>
+{% for task in tasks %}
+  <li class="{% if task.completed %}completed{% endif %}">
+    <div class="task-item"
+         {% if not (editing_task and editing_task.id == task.id) %}
+         onclick="toggleComplete({{ task.id }})"
+         {% endif %}>
+
+      <!-- 左側：チェックボックス + タスク文章 -->
+      <div class="task-left">
+        <input type="checkbox" {% if task.completed %}checked{% endif %}
+               onclick="event.stopPropagation(); document.getElementById('complete-form-{{ task.id }}').submit();"
+               form="complete-form-{{ task.id }}">
+        <div class="task-content">
+          {% if editing_task and editing_task.id == task.id %}
+           <form action="/update/{{ task.id }}" method="post">
+    <!-- タイトル編集 -->
+             <input type="text" name="title" value="{{ task.title }}" class="task-input">
+
+    <!-- 期限編集（追加部分） -->
+             <label>期限：</label>
+             <input type="date" name="due_date" value="{{ task.due_date }}" class="due-input">
+
+              <button type="submit" class="btn edit">保存</button>
+              </form>
+          {% else %}
+            <b>{{ task.title }}</b><br>
+            <small>
+              作成: {{ task.created_at }}　
+              期限: {{ task.due_date if task.due_date else "なし" }}
+            </small>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 右側：編集・削除ボタン -->
+      {% if not (editing_task and editing_task.id == task.id) %}
+      <div class="task-actions">
+        <form action="/edit/{{ task.id }}" method="get">
+          <button type="submit" class="btn edit">編集</button>
+        </form>
+        <form action="/delete/{{ task.id }}" method="post">
+          <button type="submit" class="btn delete">削除</button>
+        </form>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- 非表示の完了フォーム -->
+    <form id="complete-form-{{ task.id }}" action="/complete/{{ task.id }}" method="post" style="display:none;">
+      <input type="checkbox" {% if task.completed %}checked{% endif %}>
+    </form>
+  </li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>完了済み</h2>
+<ul>
+{% for task in completed_tasks %}
+  <li class="completed">
+    <div class="task-item"
+         {% if not (editing_task and editing_task.id == task.id) %}
+         onclick="toggleComplete({{ task.id }})"
+         {% endif %}>
+
+      <!-- 左側：チェックボックス + タスク文章 -->
+      <div class="task-left">
+        <input type="checkbox" checked
+               onclick="event.stopPropagation(); document.getElementById('complete-form-{{ task.id }}').submit();"
+               form="complete-form-{{ task.id }}">
+        <div class="task-content">
+          {% if editing_task and editing_task.id == task.id %}
+            <form action="/update/{{ task.id }}" method="post">
+              <input type="text" name="title" value="{{ task.title }}" class="task-input">
+              <button type="submit" class="btn edit">保存</button>
+            </form>
+          {% else %}
+            <b>{{ task.title }}</b><br>
+            <small>
+              作成: {{ task.created_at }}　
+              期限: {{ task.due_date if task.due_date else "なし" }}
+            </small>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 右側：編集・削除ボタン -->
+      {% if not (editing_task and editing_task.id == task.id) %}
+      <div class="task-actions">
+        <form action="/edit/{{ task.id }}" method="get">
+          <button type="submit" class="btn edit">編集</button>
+        </form>
+        <form action="/delete/{{ task.id }}" method="post">
+          <button type="submit" class="btn delete">削除</button>
+        </form>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- 非表示の完了フォーム -->
+    <form id="complete-form-{{ task.id }}" action="/complete/{{ task.id }}" method="post" style="display:none;">
+      <input type="checkbox" checked>
+    </form>
+  </li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
+

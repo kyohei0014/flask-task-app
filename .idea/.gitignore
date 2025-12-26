@@ -1,0 +1,3 @@
+# デフォルトの無視対象ファイル
+/../../task_app /.idea/shelf/
+/../../task_app /.idea/workspace.xml

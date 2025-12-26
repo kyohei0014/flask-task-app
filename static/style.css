@@ -1,0 +1,135 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 10px;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    margin-top: 25px;
+    border-left: 6px solid #4CAF50;
+    padding-left: 8px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin: 6px 0;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px;
+    background: #f7f7f7;
+    border-radius: 5px;
+}
+
+.task-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1; /* 文章が短くても右端にボタンを固定 */
+}
+
+.task-content {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.task-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.completed {
+    opacity: 0.5; /* 薄く表示 */
+    text-decoration: none; /* 打ち消し線を消す */
+}
+
+
+/* 追加フォーム */
+.task-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-input {
+    width: 400px;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.add-form {
+    margin-bottom: 15px;
+}
+
+.due-area {
+    text-align: right;
+    margin-top: 5px;
+}
+
+.due-label {
+    font-weight: bold;
+    margin-right: 6px;
+}
+
+.due-input {
+    padding: 6px;
+    font-size: 14px;
+}
+
+button {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+}
+
+.add {
+  background-color: #007bff;
+}
+.add:hover {
+  background-color: #005fc4;
+}
+
+.edit {
+  background-color: #28a745;
+}
+.edit:hover {
+  background-color: #1f7d34;
+}
+
+.delete {
+  background-color: #dc3545;
+}
+.delete:hover {
+  background-color: #a52834;
+}
+
+
+
+
