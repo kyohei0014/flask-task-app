@@ -166,6 +166,9 @@ def update(task_id):
 # --------------------
 # 起動
 # --------------------
+# アプリ起動時に必ずDB初期化
+init_db()
+
 if __name__ == "__main__":
-    init_db()
-    app.run(debug=True)
+    app.run()
+
