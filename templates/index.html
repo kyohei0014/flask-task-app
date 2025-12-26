@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Task App</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
       /* 完了済みタスクを薄く表示 */
       .completed {
@@ -75,9 +75,7 @@
 {% for task in tasks %}
   <li class="{% if task.completed %}completed{% endif %}">
     <div class="task-item"
-         {% if not (editing_task and editing_task.id == task.id) %}
-         onclick="toggleComplete({{ task.id }})"
-         {% endif %}>
+         {% if not (editing_task and editing_task.id == task.id) %} onclick="toggleComplete({{ task.id }})" {% endif %}>
 
       <!-- 左側：チェックボックス + タスク文章 -->
       <div class="task-left">
@@ -87,20 +85,16 @@
         <div class="task-content">
           {% if editing_task and editing_task.id == task.id %}
            <form action="/update/{{ task.id }}" method="post">
-    <!-- タイトル編集 -->
              <input type="text" name="title" value="{{ task.title }}" class="task-input">
-
-    <!-- 期限編集（追加部分） -->
              <label>期限：</label>
-             <input type="date" name="due_date" value="{{ task.due_date }}" class="due-input">
-
-              <button type="submit" class="btn edit">保存</button>
-              </form>
+             <input type="date" name="due_date" value="{{ task.due_date|string if task.due_date else '' }}" class="due-input">
+             <button type="submit" class="btn edit">保存</button>
+           </form>
           {% else %}
             <b>{{ task.title }}</b><br>
             <small>
-              作成: {{ task.created_at }}　
-              期限: {{ task.due_date if task.due_date else "なし" }}
+              作成: {{ task.created_at.strftime('%Y-%m-%d %H:%M') if task.created_at else '' }}　
+              期限: {{ task.due_date.strftime('%Y-%m-%d') if task.due_date else "なし" }}
             </small>
           {% endif %}
         </div>
@@ -135,11 +129,8 @@
 {% for task in completed_tasks %}
   <li class="completed">
     <div class="task-item"
-         {% if not (editing_task and editing_task.id == task.id) %}
-         onclick="toggleComplete({{ task.id }})"
-         {% endif %}>
+         {% if not (editing_task and editing_task.id == task.id) %} onclick="toggleComplete({{ task.id }})" {% endif %}>
 
-      <!-- 左側：チェックボックス + タスク文章 -->
       <div class="task-left">
         <input type="checkbox" checked
                onclick="event.stopPropagation(); document.getElementById('complete-form-{{ task.id }}').submit();"
@@ -153,14 +144,13 @@
           {% else %}
             <b>{{ task.title }}</b><br>
             <small>
-              作成: {{ task.created_at }}　
-              期限: {{ task.due_date if task.due_date else "なし" }}
+              作成: {{ task.created_at.strftime('%Y-%m-%d %H:%M') if task.created_at else '' }}　
+              期限: {{ task.due_date.strftime('%Y-%m-%d') if task.due_date else "なし" }}
             </small>
           {% endif %}
         </div>
       </div>
 
-      <!-- 右側：編集・削除ボタン -->
       {% if not (editing_task and editing_task.id == task.id) %}
       <div class="task-actions">
         <form action="/edit/{{ task.id }}" method="get">
@@ -174,7 +164,6 @@
 
     </div>
 
-    <!-- 非表示の完了フォーム -->
     <form id="complete-form-{{ task.id }}" action="/complete/{{ task.id }}" method="post" style="display:none;">
       <input type="checkbox" checked>
     </form>
