@@ -14,19 +14,10 @@ def get_db():
 # --------------------
 # DB 初期化
 # --------------------
-def init_db():
-    conn = get_db()
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            completed INTEGER DEFAULT 0,
-            created_at TEXT,
-            due_date TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
+    def init_db():
+        pass
+
+
 
 
 # --------------------
@@ -167,8 +158,8 @@ def update(task_id):
 # 起動
 # --------------------
 # アプリ起動時に必ずDB初期化
-init_db()
-
 if __name__ == "__main__":
-    app.run()
+    init_db()
+    app.run(host="0.0.0.0", port=5000)
+
 
