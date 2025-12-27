@@ -77,7 +77,6 @@
     <div class="task-item"
          {% if not (editing_task and editing_task.id == task.id) %} onclick="toggleComplete({{ task.id }})" {% endif %}>
 
-      <!-- 左側：チェックボックス + タスク文章 -->
       <div class="task-left">
         <input type="checkbox" {% if task.completed %}checked{% endif %}
                onclick="event.stopPropagation(); document.getElementById('complete-form-{{ task.id }}').submit();"
@@ -100,7 +99,6 @@
         </div>
       </div>
 
-      <!-- 右側：編集・削除ボタン -->
       {% if not (editing_task and editing_task.id == task.id) %}
       <div class="task-actions">
         <form action="/edit/{{ task.id }}" method="get">
@@ -114,7 +112,6 @@
 
     </div>
 
-    <!-- 非表示の完了フォーム -->
     <form id="complete-form-{{ task.id }}" action="/complete/{{ task.id }}" method="post" style="display:none;">
       <input type="checkbox" {% if task.completed %}checked{% endif %}>
     </form>
@@ -173,4 +170,3 @@
 
 </body>
 </html>
-
