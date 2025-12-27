@@ -8,7 +8,7 @@ app = Flask(__name__)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 def get_db():
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.RealDictCursor)
     return conn
 
 def init_db():
@@ -25,7 +25,6 @@ def init_db():
     """)
     conn.commit()
     cur.close()
-    conn.close()
 
 @app.route("/")
 def index():
