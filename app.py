@@ -71,16 +71,17 @@ def index():
 # --------------------
 @app.route("/add", methods=["POST"])
 def add():
-    title = request.form["title"]
-    due_date = request.form["due_date"]
+    title = request.form.get("title")
+    due_date = request.form.get("due_date") or None
+    if due_date:
+        due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("INSERT INTO tasks (title, completed, due_date) VALUES (%s, FALSE, %s)", (title, due_date))
+    cur.execute("INSERT INTO tasks (title, due_date) VALUES (%s, %s)", (title, due_date))
     conn.commit()
     cur.close()
     conn.close()
     return redirect("/")
-
 
 # --------------------
 # タスク完了切替
@@ -112,19 +113,19 @@ def edit(task_id):
     conn.close()
     return render_template("index.html", tasks=tasks, completed_tasks=completed_tasks, editing_task=editing_task)
 
-# 既存の update 関数例
 @app.route("/update/<int:task_id>", methods=["POST"])
 def update(task_id):
-    title = request.form["title"]
-    due_date = request.form["due_date"]  # ←追加
+    title = request.form.get("title")
+    due_date = request.form.get("due_date") or None
+    if due_date:
+        due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("UPDATE tasks SET title = %s, due_date = %s WHERE id = %s", (title, due_date, task_id))
+    cur.execute("UPDATE tasks SET title=%s, due_date=%s WHERE id=%s", (title, due_date, task_id))
     conn.commit()
     cur.close()
     conn.close()
     return redirect("/")
-
 
 # --------------------
 # タスク削除
