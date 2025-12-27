@@ -1,11 +1,42 @@
-body { font-family: Arial, sans-serif; margin: 20px; }
-.task-input { padding: 5px; width: 300px; }
-.btn { padding: 5px 10px; cursor: pointer; }
-.add { background-color: #4CAF50; color: white; border: none; }
-.edit { background-color: #2196F3; color: white; border: none; }
-.delete { background-color: #f44336; color: white; border: none; }
-.due-area { margin-top: 5px; }
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
 
+.task-input {
+    padding: 5px;
+    width: 300px;
+}
+
+.btn {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* 追加ボタン（青） */
+.add {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+}
+
+/* 編集・保存ボタン（緑） */
+.edit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+/* 削除ボタン（赤） */
+.delete {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.due-area {
+    margin-top: 5px;
+}
 
 
 
