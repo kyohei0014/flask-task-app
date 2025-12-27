@@ -37,18 +37,18 @@ Render にデプロイしており、ブラウザからすぐに動作確認が�
 
 2.リポジトリをクローン
 
- git clone https://github.com/kyohei0014/flask-task-app.git
- cd flask-task-app
+  - git clone https://github.com/kyohei0014/flask-task-app.git
+  - cd flask-task-app
 
 3.依存関係をインストール
 
- pip install -r requirements.txt
+  - pip install -r requirements.txt
 
 4.PostgreSQL の接続情報を環境変数 DATABASE_URL に設定
 
 5.アプリを起動
 
- python app.py
+  - python app.py
 
 6.ブラウザで http://127.0.0.1:5000 にアクセス
 
