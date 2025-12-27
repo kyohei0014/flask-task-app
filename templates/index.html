@@ -5,33 +5,11 @@
     <title>Task App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-      /* 完了済みタスクを薄く表示 */
-      .completed {
-          opacity: 0.5;
-      }
-
-      /* タスク行全体をFlexで左右に分ける */
-      .task-item {
-          display: flex;
-          align-items: center;
-          justify-content: space-between; /* 左：チェック+文章、右：ボタン */
-          gap: 8px;
-      }
-
-      .task-left {
-          display: flex;
-          align-items: center;
-          gap: 8px; /* チェックと文章の間隔 */
-      }
-
-      .task-content {
-          min-width: 0; /* 文章が長くても折り返す */
-      }
-
-      .task-actions {
-          display: flex;
-          gap: 4px; /* ボタン間の間隔 */
-      }
+      .completed { opacity: 0.5; }
+      .task-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .task-left { display: flex; align-items: center; gap: 8px; }
+      .task-content { min-width: 0; }
+      .task-actions { display: flex; gap: 4px; }
     </style>
     <script>
       function toggleComplete(taskId) {
@@ -43,7 +21,6 @@
 
 <h1>タスク管理アプリ</h1>
 
-<!-- 追加フォーム -->
 <form action="/add" method="post" class="add-form">
   <div class="task-row">
       <input id="taskInput" class="task-input" type="text" name="title" placeholder="タスクを入力" />
@@ -57,7 +34,6 @@
 
 <hr>
 
-<!-- 並び替え -->
 <form method="get" action="/" style="margin-bottom: 10px;">
   <label>並び替え：</label>
   <select name="sort">
@@ -74,9 +50,7 @@
 <ul>
 {% for task in tasks %}
   <li class="{% if task.completed %}completed{% endif %}">
-    <div class="task-item"
-         {% if not (editing_task and editing_task.id == task.id) %} onclick="toggleComplete({{ task.id }})" {% endif %}>
-
+    <div class="task-item" {% if not (editing_task and editing_task.id == task.id) %} onclick="toggleComplete({{ task.id }})" {% endif %}>
       <div class="task-left">
         <input type="checkbox" {% if task.completed %}checked{% endif %}
                onclick="event.stopPropagation(); document.getElementById('complete-form-{{ task.id }}').submit();"
@@ -98,7 +72,6 @@
           {% endif %}
         </div>
       </div>
-
       {% if not (editing_task and editing_task.id == task.id) %}
       <div class="task-actions">
         <form action="/edit/{{ task.id }}" method="get">
@@ -109,9 +82,7 @@
         </form>
       </div>
       {% endif %}
-
     </div>
-
     <form id="complete-form-{{ task.id }}" action="/complete/{{ task.id }}" method="post" style="display:none;">
       <input type="checkbox" {% if task.completed %}checked{% endif %}>
     </form>
@@ -119,15 +90,11 @@
 {% endfor %}
 </ul>
 
-<hr>
-
 <h2>完了済み</h2>
 <ul>
 {% for task in completed_tasks %}
   <li class="completed">
-    <div class="task-item"
-         {% if not (editing_task and editing_task.id == task.id) %} onclick="toggleComplete({{ task.id }})" {% endif %}>
-
+    <div class="task-item" {% if not (editing_task and editing_task.id == task.id) %} onclick="toggleComplete({{ task.id }})" {% endif %}>
       <div class="task-left">
         <input type="checkbox" checked
                onclick="event.stopPropagation(); document.getElementById('complete-form-{{ task.id }}').submit();"
@@ -147,7 +114,6 @@
           {% endif %}
         </div>
       </div>
-
       {% if not (editing_task and editing_task.id == task.id) %}
       <div class="task-actions">
         <form action="/edit/{{ task.id }}" method="get">
@@ -158,9 +124,7 @@
         </form>
       </div>
       {% endif %}
-
     </div>
-
     <form id="complete-form-{{ task.id }}" action="/complete/{{ task.id }}" method="post" style="display:none;">
       <input type="checkbox" checked>
     </form>
