@@ -148,3 +148,23 @@ def update_task(task_id):
 if __name__ == "__main__":
     init_db()  # 初回デプロイ時にテーブル作成
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+def init_db():
+    """データベースにテーブルがなければ作成"""
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS tasks (
+            id SERIAL PRIMARY KEY,
+            title TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            due_date DATE,
+            completed BOOLEAN DEFAULT FALSE
+        )
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# アプリ起動時に必ずテーブル作成
+init_db()
