@@ -9,6 +9,15 @@ app = Flask(__name__)
 # PostgreSQLのURL（RenderのEnvironment Variablesで設定済み）
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL is not set!")
+
+# postgres:// を postgresql:// に変換
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+print("Using DB:", DATABASE_URL)
+
 # --------------------
 # DB 接続
 # --------------------
@@ -142,3 +151,4 @@ def delete(task_id):
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
