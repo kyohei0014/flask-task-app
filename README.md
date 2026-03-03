@@ -121,12 +121,13 @@ https://flask-task-app-j6za.onrender.com
   - セッション管理や認証処理の学習を目的とする
 
 - カレンダー表示
-  - 追加した予定をカレンダーで視覚化 
+　- 追加した予定をカレンダーで視覚化
+  
 
 ## 技術スタック（アプリやシステムを作るために使っている技術の組み合わせ）
 - Python 3.13 
 - Flask 
-- PostgreSQL 
+- Postgre2SQL 
 - psycopg2-binary 
 - Gunicorn 
 - HTML / CSS（テンプレートエンジン：Jinja2） 
