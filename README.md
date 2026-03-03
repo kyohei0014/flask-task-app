@@ -13,7 +13,7 @@ Render にデプロイしており、ブラウザからすぐに動作確認が�
 
 ## デプロイURL（公開中）
 
-▶ **https://flask-task-app-j6za.onrender.com**
+▶ **https://flask-task-app-1.onrender.com**
 
 ## 実装した機能一覧
 
