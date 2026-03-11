@@ -13,7 +13,7 @@ app.secret_key = "secret-key"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-login_manager.login_message = ""
+login_manager.login_message = None
 
 # PostgreSQLのURL（RenderのEnvironment Variablesで設定済み）
 DATABASE_URL = os.environ.get("DATABASE_URL")
