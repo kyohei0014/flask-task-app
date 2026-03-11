@@ -64,14 +64,10 @@
 
 <hr>
 
-<form method="GET" action="/" style="margin-bottom:10px;">
-<input type="text" name="q" placeholder="タスク検索">
-<button type="submit">検索</button>
-</form>
+<form method="get" action="/" style="margin-bottom: 10px; display:flex; gap:10px; align-items:center;">
 
-<!-- 並び替え -->
-<form method="get" action="/" style="margin-bottom: 10px;">
   <label>並び替え：</label>
+
   <select name="sort">
     <option value="">並び替えなし</option>
     <option value="created_new">作成日（新しい順）</option>
@@ -79,7 +75,14 @@
     <option value="due_near">期限が近い順</option>
     <option value="due_far">期限が遠い順</option>
   </select>
+
   <button type="submit">並び替え</button>
+
+  <!-- 検索追加 -->
+  <input type="text" name="q" placeholder="タスク検索">
+
+  <button type="submit">検索</button>
+
 </form>
 
 <h2>未完了</h2>
