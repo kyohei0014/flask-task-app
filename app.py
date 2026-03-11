@@ -43,7 +43,9 @@ class User(UserMixin):
         self.id = id
         self.username = username
 
-login_manager.login_view = "login"# --------------------
+login_manager.login_view = "login"
+
+# --------------------
 # 初回起動時にテーブル作成
 # --------------------
 def init_db():
@@ -222,6 +224,7 @@ def complete(task_id):
 # タスク編集
 # --------------------
 @app.route("/edit/<int:task_id>", methods=["GET"])
+@login_required
 def edit(task_id):
     conn = get_db()
     cur = conn.cursor()
