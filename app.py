@@ -4,7 +4,15 @@ import psycopg2.extras
 import os
 from datetime import datetime
 
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
 app = Flask(__name__)
+app.secret_key = "secret-key"
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
 
 # PostgreSQLのURL（RenderのEnvironment Variablesで設定済み）
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -27,6 +35,14 @@ def get_db():
     return conn
 
 # --------------------
+# Userクラス
+# --------------------
+class User(UserMixin):
+    def __init__(self, id, username):
+        self.id = id
+        self.username = username
+
+# --------------------
 # 初回起動時にテーブル作成
 # --------------------
 def init_db():
@@ -42,17 +58,88 @@ def init_db():
             completed BOOLEAN DEFAULT FALSE
         )
     """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
+        )
+    """)
     conn.commit()
     cur.close()
     conn.close()
 
 # アプリ起動時に必ずテーブル作成
 init_db()
+@login_manager.user_loader
+def load_user(user_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, username FROM users WHERE id=%s", (user_id,))
+    user = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if user:
+        return User(user["id"], user["username"])
+    return None
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        password_hash = generate_password_hash(password)
+
+        conn = get_db()
+        cur = conn.cursor()
+
+        cur.execute(
+            "INSERT INTO users (username, password_hash) VALUES (%s, %s)",
+            (username, password_hash),
+        )
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return redirect("/login")
+
+    return render_template("register.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn = get_db()
+        cur = conn.cursor()
+
+        cur.execute(
+            "SELECT id, username, password_hash FROM users WHERE username=%s",
+            (username,),
+        )
+
+        user = cur.fetchone()
+
+        cur.close()
+        conn.close()
+
+        if user and check_password_hash(user["password_hash"], password):
+            login_user(User(user["id"], user["username"]))
+            return redirect("/")
+
+    return render_template("login.html")
 
 # --------------------
 # ルート
 # --------------------
 @app.route("/", methods=["GET"])
+@login_required
 def index():
     sort = request.args.get("sort", "")
     order = ""
