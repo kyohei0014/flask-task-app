@@ -1,4 +1,4 @@
 Flask
-psycopg2-binary
 flask-login
+psycopg2-binary
 Werkzeug
