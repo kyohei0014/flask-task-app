@@ -158,6 +158,9 @@ def logout():
 @app.route("/", methods=["GET"])
 @login_required
 def index():
+
+    q = request.args.get("q")
+
     sort = request.args.get("sort", "")
     order = ""
     if sort == "created_new":
@@ -171,19 +174,40 @@ def index():
 
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(
-        f"SELECT * FROM tasks WHERE user_id=%s AND completed = FALSE {order}",
-        (current_user.id,)
-    )
+
+    query = f"SELECT * FROM tasks WHERE user_id=%s AND completed=FALSE"
+    params = [current_user.id]
+
+    if q:
+        query += " AND title ILIKE %s"
+        params.append(f"%{q}%")
+
+    query += f" {order}"
+
+    cur.execute(query, params)
     tasks = cur.fetchall()
-    cur.execute(
-        f"SELECT * FROM tasks WHERE user_id=%s AND completed = TRUE {order}",
-        (current_user.id,)
-    )
+
+    query2 = "SELECT * FROM tasks WHERE user_id=%s AND completed=TRUE"
+    params2 = [current_user.id]
+
+    if q:
+        query2 += " AND title ILIKE %s"
+        params2.append(f"%{q}%")
+
+    query2 += f" {order}"
+
+    cur.execute(query2, params2)
     completed_tasks = cur.fetchall()
+
     cur.close()
     conn.close()
-    return render_template("index.html", tasks=tasks, completed_tasks=completed_tasks, editing_task=None)
+
+    return render_template(
+        "index.html",
+        tasks=tasks,
+        completed_tasks=completed_tasks,
+        editing_task=None
+    )
 
 # --------------------
 # タスク追加
