@@ -176,6 +176,7 @@ def index():
 # タスク追加
 # --------------------
 @app.route("/add", methods=["POST"])
+@login_required
 def add():
     title = request.form.get("title")
     due_date = request.form.get("due_date") or None
@@ -196,6 +197,7 @@ def add():
 # タスク完了切替
 # --------------------
 @app.route("/complete/<int:task_id>", methods=["POST"])
+@login_required
 def complete(task_id):
     conn = get_db()
     cur = conn.cursor()
@@ -232,6 +234,7 @@ def edit(task_id):
     return render_template("index.html", tasks=tasks, completed_tasks=completed_tasks, editing_task=editing_task)
 
 @app.route("/update/<int:task_id>", methods=["POST"])
+@login_required
 def update(task_id):
     title = request.form.get("title")
     due_date = request.form.get("due_date") or None
@@ -249,6 +252,7 @@ def update(task_id):
 # タスク削除
 # --------------------
 @app.route("/delete/<int:task_id>", methods=["POST"])
+@login_required
 def delete(task_id):
     conn = get_db()
     cur = conn.cursor()
@@ -257,6 +261,8 @@ def delete(task_id):
     cur.close()
     conn.close()
     return redirect("/")
+
+
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
