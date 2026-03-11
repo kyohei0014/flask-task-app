@@ -13,6 +13,7 @@ app.secret_key = "secret-key"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+login_manager.login_message = ""
 
 # PostgreSQLのURL（RenderのEnvironment Variablesで設定済み）
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -42,7 +43,7 @@ class User(UserMixin):
         self.id = id
         self.username = username
 
-# --------------------
+login_manager.login_view = "login"# --------------------
 # 初回起動時にテーブル作成
 # --------------------
 def init_db():
