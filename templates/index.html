@@ -120,7 +120,17 @@
             <b>{{ task.title }}</b><br>
             <small>
               作成: {{ task.created_at }}　
-              期限: {{ task.due_date if task.due_date else "なし" }}
+             {% if task.due_date %}
+               {% if task.due_date < now().date() %}
+                <span style="color:red;">
+                    期限: {{ task.due_date }}（期限切れ）
+                </span>
+                {% else %}
+                期限: {{ task.due_date }}
+              {% endif %}
+            {% else %}
+                期限: なし
+            {% endif %}
             </small>
           {% endif %}
         </div>
@@ -174,7 +184,17 @@
             <b>{{ task.title }}</b><br>
             <small>
               作成: {{ task.created_at }}　
-              期限: {{ task.due_date if task.due_date else "なし" }}
+            {% if task.due_date %}
+              {% if task.due_date < now().date() %}
+                <span style="color:red;">
+                    期限: {{ task.due_date }}（期限切れ）
+                </span>
+                {% else %}
+                期限: {{ task.due_date }}
+                {% endif %}
+                {% else %}
+                期限: なし
+                {% endif %}
             </small>
           {% endif %}
         </div>

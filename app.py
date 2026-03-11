@@ -206,7 +206,8 @@ def index():
         "index.html",
         tasks=tasks,
         completed_tasks=completed_tasks,
-        editing_task=None
+        editing_task=None,
+        now=datetime.now
     )
 
 # --------------------
