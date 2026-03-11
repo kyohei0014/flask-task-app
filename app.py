@@ -46,7 +46,6 @@ class User(UserMixin):
 # 初回起動時にテーブル作成
 # --------------------
 def init_db():
-    """tasksテーブルが存在しなければ作成"""
     conn = get_db()
     cur = conn.cursor()
 
@@ -61,6 +60,12 @@ def init_db():
     );
     """)
 
+    # 既存DBにuser_idが無い場合追加
+    cur.execute("""
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS user_id INTEGER;
+    """)
+
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -72,7 +77,6 @@ def init_db():
     conn.commit()
     cur.close()
     conn.close()
-
 # アプリ起動時に必ずテーブル作成
 init_db()
 @login_manager.user_loader
