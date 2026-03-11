@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 import psycopg2
 import psycopg2.extras
 import os
@@ -50,12 +50,14 @@ def init_db():
     conn = get_db()
     cur = conn.cursor()
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS tasks (
-            id SERIAL PRIMARY KEY,
-            title TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            due_date DATE,
-            completed BOOLEAN DEFAULT FALSE
+       CREATE TABLE IF NOT EXISTS tasks (
+    　　　　id SERIAL PRIMARY KEY,
+    　　　　user_id INTEGER,
+    　　　　title TEXT NOT NULL,
+    　　　　created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    　　　　due_date DATE,
+    　　　　completed BOOLEAN DEFAULT FALSE
+) 
         )
     """)
     cur.execute("""
@@ -105,7 +107,7 @@ def register():
         conn.commit()
         cur.close()
         conn.close()
-
+        flash("ユーザー登録が完了しました")
         return redirect("/login")
 
     return render_template("register.html")
@@ -132,6 +134,7 @@ def login():
         if user and check_password_hash(user["password_hash"], password):
             login_user(User(user["id"], user["username"]))
             return redirect("/")
+        flash("ユーザー名またはパスワードが違います")
 
     return render_template("login.html")
 
@@ -154,9 +157,15 @@ def index():
 
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM tasks WHERE completed = FALSE {order}")
+    cur.execute(
+        f"SELECT * FROM tasks WHERE user_id=%s AND completed = FALSE {order}",
+        (current_user.id,)
+    )
     tasks = cur.fetchall()
-    cur.execute(f"SELECT * FROM tasks WHERE completed = TRUE {order}")
+    cur.execute(
+        f"SELECT * FROM tasks WHERE user_id=%s AND completed = TRUE {order}",
+        (current_user.id,)
+    )
     completed_tasks = cur.fetchall()
     cur.close()
     conn.close()
@@ -173,7 +182,10 @@ def add():
         due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("INSERT INTO tasks (title, due_date) VALUES (%s, %s)", (title, due_date))
+    cur.execute(
+        "INSERT INTO tasks (user_id, title, due_date) VALUES (%s, %s, %s)",
+        (current_user.id, title, due_date)
+    )
     conn.commit()
     cur.close()
     conn.close()
@@ -199,11 +211,20 @@ def complete(task_id):
 def edit(task_id):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM tasks WHERE id = %s", (task_id,))
+    cur.execute(
+        "SELECT * FROM tasks WHERE id=%s AND user_id=%s",
+        (task_id, current_user.id)
+    )
     editing_task = cur.fetchone()
-    cur.execute("SELECT * FROM tasks WHERE completed = FALSE")
+    cur.execute(
+        "SELECT * FROM tasks WHERE user_id=%s AND completed=FALSE",
+        (current_user.id,)
+    )
     tasks = cur.fetchall()
-    cur.execute("SELECT * FROM tasks WHERE completed = TRUE")
+    cur.execute(
+        "SELECT * FROM tasks WHERE user_id=%s AND completed=TRUE",
+        (current_user.id,)
+    )
     completed_tasks = cur.fetchall()
     cur.close()
     conn.close()

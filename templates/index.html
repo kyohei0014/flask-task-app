@@ -43,6 +43,13 @@
 
 <h1>タスク管理アプリ</h1>
 
+<p>
+ログインユーザー: {{ current_user.username }}
+</p>
+
+<a href="/logout">
+<button>ログアウト</button>
+</a>
 <!-- 追加フォーム -->
 <form action="/add" method="post" class="add-form">
   <div class="task-row">
