@@ -49,6 +49,16 @@ def init_db():
     conn = get_db()
     cur = conn.cursor()
 
+    # users テーブル
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL
+    );
+    """)
+
+    # tasks テーブル
     cur.execute("""
     CREATE TABLE IF NOT EXISTS tasks (
         id SERIAL PRIMARY KEY,
@@ -57,20 +67,6 @@ def init_db():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         due_date DATE,
         completed BOOLEAN DEFAULT FALSE
-    );
-    """)
-
-    # 既存DBにuser_idが無い場合追加
-    cur.execute("""
-    ALTER TABLE tasks
-    ADD COLUMN IF NOT EXISTS user_id INTEGER;
-    """)
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        username TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL
     );
     """)
 
