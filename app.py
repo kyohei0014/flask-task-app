@@ -49,24 +49,26 @@ def init_db():
     """tasksテーブルが存在しなければ作成"""
     conn = get_db()
     cur = conn.cursor()
+
     cur.execute("""
-       CREATE TABLE IF NOT EXISTS tasks (
-    　　　　id SERIAL PRIMARY KEY,
-    　　　　user_id INTEGER,
-    　　　　title TEXT NOT NULL,
-    　　　　created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    　　　　due_date DATE,
-    　　　　completed BOOLEAN DEFAULT FALSE
-) 
-        )
+    CREATE TABLE IF NOT EXISTS tasks (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        title TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        due_date DATE,
+        completed BOOLEAN DEFAULT FALSE
+    );
     """)
+
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL
-        )
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL
+    );
     """)
+
     conn.commit()
     cur.close()
     conn.close()
@@ -135,7 +137,6 @@ def login():
             login_user(User(user["id"], user["username"]))
             return redirect("/")
         flash("ユーザー名またはパスワードが違います")
-
     return render_template("login.html")
 
 # --------------------
