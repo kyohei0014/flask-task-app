@@ -93,7 +93,7 @@
 <h2>未完了</h2>
 <ul>
 {% for task in tasks %}
-  <li class="{% if task.completed %}completed{% endif %}">
+ <li class="{% if task.due_date and task.due_date < now().date() %}overdue{% endif %}">
     <div class="task-item"
          {% if not (editing_task and editing_task.id == task.id) %}
          onclick="toggleComplete({{ task.id }})"

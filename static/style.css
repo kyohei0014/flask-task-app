@@ -39,8 +39,8 @@ body {
 }
 
 .overdue {
-    color: red;
-    font-weight: bold;
+    background-color: #ffe5e5;
+    border-left: 4px solid #f44336;
 }
 
 
