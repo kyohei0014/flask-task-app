@@ -215,7 +215,7 @@ def index():
         tasks=tasks,
         completed_tasks=completed_tasks,
         editing_task=None,
-        now=datetime.now
+        today=datetime.today().date()
     )
 
 # --------------------
@@ -281,7 +281,15 @@ def edit(task_id):
     completed_tasks = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template("index.html", tasks=tasks, completed_tasks=completed_tasks, editing_task=editing_task)
+
+
+    return render_template(
+        "index.html",
+        tasks=tasks,
+        completed_tasks=completed_tasks,
+        editing_task=editing_task,
+        today=datetime.today().date()
+    )
 
 @app.route("/update/<int:task_id>", methods=["POST"])
 @login_required

@@ -93,7 +93,7 @@
 <h2>未完了</h2>
 <ul>
 {% for task in tasks %}
- <li class="{% if task.due_date and task.due_date < now().date() %}overdue{% endif %}">
+ <li class="{% if task.due_date and task.due_date < today %}overdue{% endif %}">
     <div class="task-item"
          {% if not (editing_task and editing_task.id == task.id) %}
          onclick="toggleComplete({{ task.id }})"
@@ -121,7 +121,7 @@
             <small>
               作成: {{ task.created_at }}　
              {% if task.due_date %}
-               {% if task.due_date < now().date() %}
+              {% if task.due_date < today %}
                 <span style="color:red;">
                     期限: {{ task.due_date }}（期限切れ）
                 </span>
@@ -164,7 +164,7 @@
 <ul>
 {% for task in completed_tasks %}
   <li class="completed">
-   <div class="task-item {% if task.due_date and task.due_date < now().date() %}overdue{% endif %}">
+  <div class="task-item {% if task.due_date and task.due_date < today %}overdue{% endif %}">
 
       <!-- 左側：チェックボックス + タスク文章 -->
       <div class="task-left">
@@ -182,7 +182,7 @@
             <small>
               作成: {{ task.created_at }}　
             {% if task.due_date %}
-              {% if task.due_date < now().date() %}
+              {% if task.due_date < today %}
                 <span style="color:red;">
                     期限: {{ task.due_date }}（期限切れ）
                 </span>
