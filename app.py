@@ -65,7 +65,7 @@ def init_db():
     cur.execute("""
     CREATE TABLE IF NOT EXISTS tasks (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         title TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         due_date DATE,
@@ -104,14 +104,22 @@ def register():
         conn = get_db()
         cur = conn.cursor()
 
-        cur.execute(
-            "INSERT INTO users (username, password_hash) VALUES (%s, %s)",
-            (username, password_hash),
-        )
+        try:
+            cur.execute(
+                "INSERT INTO users (username, password_hash) VALUES (%s, %s)",
+                (username, password_hash),
+            )
+            conn.commit()
+        except psycopg2.errors.UniqueViolation:
+            conn.rollback()
+            flash("そのユーザー名は既に使われています")
+            cur.close()
+            conn.close()
+            return redirect("/register")
 
-        conn.commit()
         cur.close()
         conn.close()
+
         flash("ユーザー登録が完了しました")
         return redirect("/login")
 
@@ -239,7 +247,10 @@ def add():
 def complete(task_id):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("UPDATE tasks SET completed = NOT completed WHERE id = %s", (task_id,))
+    cur.execute(
+        "UPDATE tasks SET completed = NOT completed WHERE id = %s AND user_id = %s",
+        (task_id, current_user.id)
+    )
     conn.commit()
     cur.close()
     conn.close()
@@ -281,7 +292,10 @@ def update(task_id):
         due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("UPDATE tasks SET title=%s, due_date=%s WHERE id=%s", (title, due_date, task_id))
+    cur.execute(
+        "UPDATE tasks SET title=%s, due_date=%s WHERE id=%s AND user_id=%s",
+        (title, due_date, task_id, current_user.id)
+    )
     conn.commit()
     cur.close()
     conn.close()
@@ -295,7 +309,10 @@ def update(task_id):
 def delete(task_id):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("DELETE FROM tasks WHERE id=%s", (task_id,))
+    cur.execute(
+        "DELETE FROM tasks WHERE id=%s AND user_id=%s",
+        (task_id, current_user.id)
+    )
     conn.commit()
     cur.close()
     conn.close()

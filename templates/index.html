@@ -164,10 +164,7 @@
 <ul>
 {% for task in completed_tasks %}
   <li class="completed">
-    <div class="task-item"
-         {% if not (editing_task and editing_task.id == task.id) %}
-         onclick="toggleComplete({{ task.id }})"
-         {% endif %}>
+   <div class="task-item {% if task.due_date and task.due_date < now().date() %}overdue{% endif %}">
 
       <!-- 左側：チェックボックス + タスク文章 -->
       <div class="task-left">
