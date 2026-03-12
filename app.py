@@ -76,8 +76,9 @@ def init_db():
     conn.commit()
     cur.close()
     conn.close()
-# アプリ起動時に必ずテーブル作成
-init_db()
+@app.before_first_request
+def initialize_database():
+    init_db()
 @login_manager.user_loader
 def load_user(user_id):
     conn = get_db()
