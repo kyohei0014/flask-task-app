@@ -25,7 +25,7 @@ if not DATABASE_URL:
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-print("Using DB:", DATABASE_URL)
+print("Database configured")
 
 # --------------------
 # DB 接続
