@@ -24,9 +24,8 @@ Flask + PostgreSQL を使用して開発したタスク管理Webアプリです�
 
 ---
 
-## デモ
-
-https://flask-task-app-1.onrender.com/
+## 🌐 アプリURL
+https://flask-task-app-j6za.onrender.com
 
 ---
 
@@ -136,3 +135,28 @@ HTMLテンプレートとCSSを調整しながら
 * レスポンシブ対応
 * タグ機能
 
+## 🛠 トラブルシューティング
+
+### ■ RenderのPostgreSQL無料プランの期限切れ
+
+開発中に、Renderの無料PostgreSQLデータベースの試用期間が終了し、データベースが停止する問題が発生しました。
+
+#### 発生したエラー
+- psycopg2.OperationalError
+- could not translate host name to address
+- サービスが「suspended」状態になる
+
+#### 原因
+- 無料プランの有効期限切れ
+- External Database URLを使用していたことによる接続失敗
+
+#### 対応
+- 新しいPostgreSQLデータベースを作成
+- Internal Database URLを使用するように変更
+- RenderのEnvironment VariablesにDATABASE_URLを設定
+- アプリ起動時にinit_db()でテーブルを自動作成
+
+#### 学び
+- クラウド環境では内部接続用URL（Internal）と外部接続用URL（External）の違いを理解することが重要
+- 環境変数で接続先を管理することで柔軟な対応が可能になる
+- 本トラブルを通して、クラウド環境におけるインフラとアプリケーションの関係性への理解を深めました。
